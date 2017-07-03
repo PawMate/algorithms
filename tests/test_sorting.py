@@ -24,6 +24,7 @@ class SortingAlgorithmTestCase(unittest.TestCase):
     """
 
     def setUp(self):
+        random.seed(7)
         self.input = list(range(10))
         random.shuffle(self.input)
         self.correct = list(range(10))

@@ -9,6 +9,7 @@ from algorithms.factorization.fermat import fermat
 class TestFermat(unittest.TestCase):
 
     def test_fermat(self):
+        random.seed(7)
         x = random.randint(1, 100000000)
         factors = fermat(x)
         res = 1
