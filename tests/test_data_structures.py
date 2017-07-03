@@ -1,5 +1,6 @@
 from random import shuffle
 import unittest
+import random
 
 from algorithms.data_structures import (
     binary_search_tree,
@@ -13,7 +14,9 @@ from algorithms.data_structures import (
     union_find_with_path_compression,
     lcp_array
 )
-
+from algorithms.data_structures.array_binary_tree_operation import *
+from algorithms.data_structures.interval_tree_plus_max import IntervalTreePlusMax
+from algorithms.data_structures.interval_tree_plus_sum import IntervalTreePlusSum
 
 class TestBinarySearchTree(unittest.TestCase):
     """
@@ -715,3 +718,288 @@ class TestLCPSuffixArrays(unittest.TestCase):
         s_array, rank = lcp_array.suffix_array(self.case_3)
         self.assertEqual(s_array, self.s_array_3)
         self.assertEqual(rank, self.rank_3)
+
+		
+class Test_array_binary_tee_operation_tests(unittest.TestCase):
+    def test_is_left_son(self):
+        expected_left_sons = [2,4,130,240]
+        for left_son in expected_left_sons:
+            self.assertTrue(is_left_son(left_son))
+
+    def test_is_right_son(self):
+        expected_right_sons = [3,5,7,321,999]
+        for right_son in expected_right_sons:
+            self.assertTrue(is_right_son(right_son))
+
+    def test_get_left_son(self):
+        parents = [0,1,2,65,120]
+        left_sons_for_test = [0,2,4,130,240]
+        for node_id in range(len(parents)):
+            self.assertTrue(left_son(parents[node_id]) == left_sons_for_test[node_id])
+
+    def test_get_right_son(self):
+        parents = [0,1,2,65,120]
+        right_sons_for_test = [1,3,5,131,241]
+        for node_id in range(len(parents)):
+            self.assertTrue(right_son(parents[node_id]) == right_sons_for_test[node_id])
+
+    def test_get_left_sibiling(self):
+        nodes = [7,11,23,65,121]
+        left_sibiling_for_test = [6,10,22,64,120]
+        for node_id in range(len(nodes)):
+            self.assertTrue(left_sibling(nodes[node_id]) == left_sibiling_for_test[node_id])
+
+    def test_get_right_sibiling(self):
+        nodes = [6,12,20,60,122]
+        right_sibiling_for_test = [7,13,21,61,123]
+        for node_id in range(len(nodes)):
+            self.assertTrue(right_sibling(nodes[node_id]) == right_sibiling_for_test[node_id])
+
+    def test_get_right_sibiling(self):
+        nodes = [6,12,20,61,123]
+        expectedParents = [3,6,10,30,61]
+        for node_id in range(len(nodes)):
+            self.assertTrue(parent(nodes[node_id]) == expectedParents[node_id])
+
+
+class IntervalPlusMaxBrutalSolution:
+    def set_size(self, size):
+        self.size = size
+        self.a = [0] * self.size
+
+    def insert(self, value, begin_pos, end_pos):
+        for i in range(begin_pos, end_pos + 1):
+            self.a[i] += value
+
+    def request(self, begin_pos, end_pos):
+        result = self.a[begin_pos]
+        for i in range(begin_pos, end_pos + 1):
+            result = max(result, self.a[i])
+        return result
+
+		
+class Interval_tree_plus_max_tests(unittest.TestCase):
+    def test_setSizePowerOfTwo(self):
+        test_object = IntervalTreePlusMax()
+        expected_size = 8
+        test_object.set_size(expected_size)
+        self.assertEqual(test_object.size, expected_size)
+        self.assertEqual(len(test_object.tree), expected_size * 2)
+
+    def test_setSizeNonPowerOfTwo(self):
+        test_object = IntervalTreePlusMax()
+        expected_size = 13
+        closest_power_of_two = 16
+        test_object.set_size(expected_size)
+        self.assertEqual(test_object.size, closest_power_of_two)
+        self.assertEqual(len(test_object.tree), closest_power_of_two * 2)
+
+    def test_updateMaxLeaf(self):
+        test_object = IntervalTreePlusMax()
+        test_object.set_size(8)
+        test_object.tree[15].LOAD = 11
+        test_object.update_max(15)
+        self.assertEqual(test_object.tree[15].MAX, 11)
+
+    def test_updateMaxNotLeaf(self):
+        test_object = IntervalTreePlusMax()
+        test_object.set_size(8)
+        test_object.tree[1].LOAD = 10
+        test_object.tree[left_son(1)].MAX = 2
+        test_object.tree[right_son(1)].MAX = 7
+        test_object.update_max(1)
+        self.assertEqual(test_object.tree[1].MAX, 17)
+
+    def test_insert(self):
+        test_object = IntervalTreePlusMax()
+        test_object.set_size(8)
+        test_object.insert(5, 2, 5)
+        test_object.insert(3, 0, 4)
+        test_object.insert(7, 3, 7)
+
+        self.assertEqual(test_object.tree[1].MAX, 15)
+        self.assertEqual(test_object.tree[2].MAX, 15)
+        self.assertEqual(test_object.tree[3].MAX, 15)
+        self.assertEqual(test_object.tree[4].MAX, 3 )
+        self.assertEqual(test_object.tree[5].MAX, 15)
+        self.assertEqual(test_object.tree[6].MAX, 15)
+        self.assertEqual(test_object.tree[7].MAX, 7 )
+        self.assertEqual(test_object.tree[8].MAX, 3 )
+        self.assertEqual(test_object.tree[9].MAX, 3 )
+        self.assertEqual(test_object.tree[10].MAX, 5 )
+        self.assertEqual(test_object.tree[11].MAX, 12)
+        self.assertEqual(test_object.tree[12].MAX, 8 )
+        self.assertEqual(test_object.tree[13].MAX, 5 )
+        self.assertEqual(test_object.tree[14].MAX, 7 )
+        self.assertEqual(test_object.tree[15].MAX, 7 )
+
+        self.assertEqual(test_object.tree[1].LOAD, 0 )
+        self.assertEqual(test_object.tree[2].LOAD, 0 )
+        self.assertEqual(test_object.tree[3].LOAD, 0 )
+        self.assertEqual(test_object.tree[4].LOAD, 0 )
+        self.assertEqual(test_object.tree[5].LOAD, 3 )
+        self.assertEqual(test_object.tree[6].LOAD, 7 )
+        self.assertEqual(test_object.tree[7].LOAD, 0 )
+        self.assertEqual(test_object.tree[8].LOAD, 3 )
+        self.assertEqual(test_object.tree[9].LOAD, 3 )
+        self.assertEqual(test_object.tree[10].LOAD, 5 )
+        self.assertEqual(test_object.tree[11].LOAD, 12)
+        self.assertEqual(test_object.tree[12].LOAD, 8 )
+        self.assertEqual(test_object.tree[13].LOAD, 5 )
+        self.assertEqual(test_object.tree[14].LOAD, 7 )
+        self.assertEqual(test_object.tree[15].LOAD, 7 )
+
+    def test_request(self):
+        test_object = IntervalTreePlusMax()
+        test_object.set_size(8)
+        test_object.insert(5, 2, 5)
+        test_object.insert(3, 0, 4)
+        test_object.insert(7, 3, 7)
+
+        self.assertEqual(test_object.request(3, 3), 15)
+        self.assertEqual(test_object.request(7, 7), 7)
+        self.assertEqual(test_object.request(2, 2), 8)
+        self.assertEqual(test_object.request(2, 3), 15)
+        self.assertEqual(test_object.request(0, 2), 8)
+
+    def test_randomUseCaseCompariveBrute(self):
+        test_object = IntervalTreePlusMax()
+        brute_object = IntervalPlusMaxBrutalSolution()
+        size = random.randint(10, 1000)
+        test_object.set_size(size)
+        brute_object.set_size(size)
+        for i in range(1000):
+            if random.random() >= 0.5:
+                value = random.randint(-1000, 1000)
+                begin = random.randint(0, size - 1)
+                end = random.randint(begin, size - 1)
+                test_object.insert(value, begin, end)
+                brute_object.insert(value, begin, end)
+            else:
+                begin = random.randint(0, size - 1)
+                end = random.randint(begin, size - 1)
+                test_answer = test_object.request(begin, end)
+                brute_answer = brute_object.request(begin, end)
+                self.assertEqual(test_answer, brute_answer)
+
+
+class IntervalPlusSumBrutalSolution:
+    def set_size(self, size):
+        self.size = size
+        self.a = [0] * self.size
+
+    def insert(self, value, begin_pos, end_pos):
+        for i in range(begin_pos, end_pos + 1):
+            self.a[i] += value
+
+    def request(self, begin_pos, end_pos):
+        result = 0
+        for i in range(begin_pos, end_pos + 1):
+            result += self.a[i]
+        return result
+
+		
+class Interval_tree_plus_max_tests(unittest.TestCase):
+    def test_setSizePowerOfTwo(self):
+        test_object = IntervalTreePlusSum()
+        expected_size = 512
+        test_object.set_size(expected_size)
+        self.assertEqual(test_object.size, expected_size)
+        self.assertEqual(len(test_object.tree), expected_size * 2)
+
+    def test_setSizeNonPowerOfTwo(self):
+        test_object = IntervalTreePlusSum()
+        expected_size = 999
+        closest_power_of_two = 1024
+        test_object.set_size(expected_size)
+        self.assertEqual(test_object.size, closest_power_of_two)
+        self.assertEqual(len(test_object.tree), closest_power_of_two * 2)
+
+    def test_updateSubLeaf(self):
+        test_object = IntervalTreePlusSum()
+        test_object.set_size(16)
+        test_object.tree[31].LOAD = 11
+        test_object.update_sub(31, 1)
+        self.assertEqual(test_object.tree[31].SUB, 11)
+
+    def test_updateSubNotLeaf(self):
+        test_object = IntervalTreePlusSum()
+        test_object.set_size(16)
+        test_object.tree[1].LOAD = 10
+        test_object.tree[left_son(1)].SUB = 2
+        test_object.tree[right_son(1)].SUB = 7
+        test_object.update_sub(1, 16)
+        self.assertEqual(test_object.tree[1].SUB, 169)
+
+    def test_insert(self):
+        test_object = IntervalTreePlusSum()
+        test_object.set_size(8)
+        test_object.insert(12, 4, 6)
+        test_object.insert(34, 0, 7)
+        test_object.insert(2, 1, 1)
+
+        self.assertEqual(test_object.tree[1].SUB, 310)
+        self.assertEqual(test_object.tree[2].SUB, 138)
+        self.assertEqual(test_object.tree[3].SUB, 172)
+        self.assertEqual(test_object.tree[4].SUB, 70)
+        self.assertEqual(test_object.tree[5].SUB, 68)
+        self.assertEqual(test_object.tree[6].SUB, 92)
+        self.assertEqual(test_object.tree[7].SUB, 80)
+        self.assertEqual(test_object.tree[8].SUB, 34)
+        self.assertEqual(test_object.tree[9].SUB, 36)
+        self.assertEqual(test_object.tree[10].SUB, 0)
+        self.assertEqual(test_object.tree[11].SUB, 0)
+        self.assertEqual(test_object.tree[12].SUB, 12)
+        self.assertEqual(test_object.tree[13].SUB, 12)
+        self.assertEqual(test_object.tree[14].SUB, 46)
+        self.assertEqual(test_object.tree[15].SUB, 34)
+
+        self.assertEqual(test_object.tree[1].LOAD, 0)
+        self.assertEqual(test_object.tree[2].LOAD, 0)
+        self.assertEqual(test_object.tree[3].LOAD, 0)
+        self.assertEqual(test_object.tree[4].LOAD, 0)
+        self.assertEqual(test_object.tree[5].LOAD, 34)
+        self.assertEqual(test_object.tree[6].LOAD, 34)
+        self.assertEqual(test_object.tree[7].LOAD, 0)
+        self.assertEqual(test_object.tree[8].LOAD, 34)
+        self.assertEqual(test_object.tree[9].LOAD, 36)
+        self.assertEqual(test_object.tree[10].LOAD, 0)
+        self.assertEqual(test_object.tree[11].LOAD, 0)
+        self.assertEqual(test_object.tree[12].LOAD, 12)
+        self.assertEqual(test_object.tree[13].LOAD, 12)
+        self.assertEqual(test_object.tree[14].LOAD, 46)
+        self.assertEqual(test_object.tree[15].LOAD, 34)
+
+    def test_request(self):
+        test_object = IntervalTreePlusSum()
+        test_object.set_size(8)
+        test_object.insert(5, 2, 5)
+        test_object.insert(3, 0, 4)
+        test_object.insert(7, 3, 7)
+
+        self.assertEqual(test_object.request(3, 3), 15)
+        self.assertEqual(test_object.request(7, 7), 7)
+        self.assertEqual(test_object.request(2, 2), 8)
+        self.assertEqual(test_object.request(2, 3), 23)
+        self.assertEqual(test_object.request(0, 2), 14)
+
+    def test_randomUseCaseCompariveBrute(self):
+        test_object = IntervalTreePlusSum()
+        brute_object = IntervalPlusSumBrutalSolution()
+        size = random.randint(10, 1000)
+        test_object.set_size(size)
+        brute_object.set_size(size)
+        for i in range(1000):
+            if random.random() >= 0.5:
+                value = random.randint(-1000, 1000)
+                begin = random.randint(0, size - 1)
+                end = random.randint(begin, size - 1)
+                test_object.insert(value, begin, end)
+                brute_object.insert(value, begin, end)
+            else:
+                begin = random.randint(0, size - 1)
+                end = random.randint(begin, size - 1)
+                test_answer = test_object.request(begin, end)
+                brute_answer = brute_object.request(begin, end)
+                self.assertEqual(test_answer, brute_answer)
+				
