@@ -14,7 +14,7 @@ from algorithms.data_structures import (
     union_find_with_path_compression,
     lcp_array
 )
-from algorithms.data_structures.array_binary_tree_operation import *
+import algorithms.data_structures.array_binary_tree_operation as bto
 from algorithms.data_structures.interval_tree_plus_max import IntervalTreePlusMax
 from algorithms.data_structures.interval_tree_plus_sum import IntervalTreePlusSum
 
@@ -724,42 +724,42 @@ class Test_array_binary_tee_operation_tests(unittest.TestCase):
     def test_is_left_son(self):
         expected_left_sons = [2,4,130,240]
         for left_son in expected_left_sons:
-            self.assertTrue(is_left_son(left_son))
+            self.assertTrue(bto.is_left_son(left_son))
 
     def test_is_right_son(self):
         expected_right_sons = [3,5,7,321,999]
         for right_son in expected_right_sons:
-            self.assertTrue(is_right_son(right_son))
+            self.assertTrue(bto.is_right_son(right_son))
 
     def test_get_left_son(self):
         parents = [0,1,2,65,120]
         left_sons_for_test = [0,2,4,130,240]
         for node_id in range(len(parents)):
-            self.assertTrue(left_son(parents[node_id]) == left_sons_for_test[node_id])
+            self.assertTrue(bto.left_son(parents[node_id]) == left_sons_for_test[node_id])
 
     def test_get_right_son(self):
         parents = [0,1,2,65,120]
         right_sons_for_test = [1,3,5,131,241]
         for node_id in range(len(parents)):
-            self.assertTrue(right_son(parents[node_id]) == right_sons_for_test[node_id])
+            self.assertTrue(bto.right_son(parents[node_id]) == right_sons_for_test[node_id])
 
     def test_get_left_sibiling(self):
         nodes = [7,11,23,65,121]
         left_sibiling_for_test = [6,10,22,64,120]
         for node_id in range(len(nodes)):
-            self.assertTrue(left_sibling(nodes[node_id]) == left_sibiling_for_test[node_id])
+            self.assertTrue(bto.left_sibling(nodes[node_id]) == left_sibiling_for_test[node_id])
 
     def test_get_right_sibiling(self):
         nodes = [6,12,20,60,122]
         right_sibiling_for_test = [7,13,21,61,123]
         for node_id in range(len(nodes)):
-            self.assertTrue(right_sibling(nodes[node_id]) == right_sibiling_for_test[node_id])
+            self.assertTrue(bto.right_sibling(nodes[node_id]) == right_sibiling_for_test[node_id])
 
-    def test_get_right_sibiling(self):
+    def test_get_parent(self):
         nodes = [6,12,20,61,123]
         expectedParents = [3,6,10,30,61]
         for node_id in range(len(nodes)):
-            self.assertTrue(parent(nodes[node_id]) == expectedParents[node_id])
+            self.assertTrue(bto.parent(nodes[node_id]) == expectedParents[node_id])
 
 
 class IntervalPlusMaxBrutalSolution:
@@ -805,8 +805,8 @@ class Interval_tree_plus_max_tests(unittest.TestCase):
         test_object = IntervalTreePlusMax()
         test_object.set_size(8)
         test_object.tree[1].LOAD = 10
-        test_object.tree[left_son(1)].MAX = 2
-        test_object.tree[right_son(1)].MAX = 7
+        test_object.tree[bto.left_son(1)].MAX = 2
+        test_object.tree[bto.right_son(1)].MAX = 7
         test_object.update_max(1)
         self.assertEqual(test_object.tree[1].MAX, 17)
 
@@ -899,7 +899,7 @@ class IntervalPlusSumBrutalSolution:
         return result
 
 		
-class Interval_tree_plus_max_tests(unittest.TestCase):
+class Interval_tree_plus_sub_tests(unittest.TestCase):
     def test_setSizePowerOfTwo(self):
         test_object = IntervalTreePlusSum()
         expected_size = 512
@@ -926,8 +926,8 @@ class Interval_tree_plus_max_tests(unittest.TestCase):
         test_object = IntervalTreePlusSum()
         test_object.set_size(16)
         test_object.tree[1].LOAD = 10
-        test_object.tree[left_son(1)].SUB = 2
-        test_object.tree[right_son(1)].SUB = 7
+        test_object.tree[bto.left_son(1)].SUB = 2
+        test_object.tree[bto.right_son(1)].SUB = 7
         test_object.update_sub(1, 16)
         self.assertEqual(test_object.tree[1].SUB, 169)
 
