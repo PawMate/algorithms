@@ -1,4 +1,4 @@
-from random import shuffle
+from random import shuffle, random, seed, randint, sample
 import unittest
 
 from algorithms.data_structures import (
@@ -13,6 +13,7 @@ from algorithms.data_structures import (
     union_find_with_path_compression,
     lcp_array
 )
+from algorithms.data_structures.skip_list import SkipList
 
 
 class TestBinarySearchTree(unittest.TestCase):
@@ -715,3 +716,24 @@ class TestLCPSuffixArrays(unittest.TestCase):
         s_array, rank = lcp_array.suffix_array(self.case_3)
         self.assertEqual(s_array, self.s_array_3)
         self.assertEqual(rank, self.rank_3)
+
+
+class TestSkipList(unittest.TestCase):
+
+    def testSkipListWithRandomUse(self):
+        seed(7)
+        test_set = set()
+        skip_list = SkipList()
+        for _ in range(100):
+            number = randint(0, 1000)
+            test_set.add(number)
+            skip_list.add(number)
+            
+            if len(test_set) > 10 and random() > 0.3:
+                randomElement = sample(test_set, 1)[0]
+                
+                test_set.remove(randomElement)
+                skip_list.remove(randomElement)
+            
+            for n in range(0, 1000):
+                self.assertTrue((n in test_set) == skip_list.contain(n))
